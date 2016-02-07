@@ -58,8 +58,9 @@ def remove_from_set(field, member):
     def transform(element):
         if field in element:
             members = set(element[field])
-            members.remove(member)
-            element[field] = list(members)
+            if member in members:
+              members.remove(member)
+              element[field] = list(members)
 
     return transform
 
