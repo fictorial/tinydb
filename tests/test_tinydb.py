@@ -150,6 +150,30 @@ def test_update_transform(db):
     assert db.count(where('char') == 'a') == 0
     assert db.count(where('int') == 1) == 2
 
+def test_update_transform_list(db):
+    def increment(field):
+        def transform(el):
+            el[field] += 1
+        return transform
+
+    def decrement(field):
+        def transform(el):
+            el[field] -= 1
+        return transform
+
+    def delete(field):
+        def transform(el):
+            del el[field]
+        return transform
+
+    assert db.count(where('int') == 1) == 3
+
+    db.update([increment('int'), delete('char'), decrement('int')], where('char') == 'a')
+
+    assert db.count(where('char') == 'a') == 0
+    assert db.count(where('int') == 1) == 3
+
+
 
 def test_update_ids(db):
     db.update({'int': 2}, eids=[1, 2])

@@ -340,7 +340,9 @@ class Table(object):
         Update all matching elements to have a given set of fields.
 
         :param fields: the fields that the matching elements will have
-                       or a method that will update the elements
+                       or a function that will update the elements
+                       or a list of functions that will update the elements
+                       in the order given
         :type fields: dict | dict -> None
         :param cond: which elements to update
         :type cond: query
@@ -349,7 +351,16 @@ class Table(object):
         :returns: a list containing the updated element's ID
         """
 
-        if callable(fields):
+        if type(fields) is list:
+          eids = None
+          for item in fields:
+            if callable(item):
+                eids = self.process_elements(
+                    lambda data, eid: item(data[eid]),
+                    cond, eids
+                )
+          return eids
+        elif callable(fields):
             return self.process_elements(
                 lambda data, eid: fields(data[eid]),
                 cond, eids

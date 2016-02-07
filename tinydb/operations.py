@@ -13,6 +13,7 @@ def increment(field):
     Increment a given field in the element.
     """
     def transform(element):
+        element.setdefault(field, 0)
         element[field] += 1
 
     return transform
@@ -23,6 +24,7 @@ def decrement(field):
     Decrement a given field in the element.
     """
     def transform(element):
+        element.setdefault(field, 0)
         element[field] -= 1
 
     return transform
